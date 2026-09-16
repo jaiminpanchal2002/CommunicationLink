@@ -7,6 +7,7 @@
     { "path": "/api/cron", "schedule": "0 3 * * *" }
   ],
   "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/handler?__p=:path*" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
