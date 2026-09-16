@@ -57,7 +57,7 @@ The app also runs on Vercel with a Neon Postgres database. On this path the SQLi
 
 `NODE_ENV=production` is set by Vercel automatically, which enables `Secure` session cookies over the required HTTPS.
 
-**Reminder scheduling.** `vercel.json` schedules `/api/cron` hourly (`0 * * * *`). The Vercel Hobby plan runs cron at most once per day, which covers the monthly (7th) reminder but not the one-hour-before-conversation reminder. For the hourly reminder either upgrade to Vercel Pro, or trigger the endpoint from any external scheduler. Example for a free service such as cron-job.org, running every hour:
+**Reminder scheduling.** `vercel.json` schedules `/api/cron` once daily (`0 3 * * *`) so it deploys on the Vercel Hobby plan, which allows only daily cron jobs. The daily run covers the monthly (7th) reminder but not the one-hour-before-conversation reminder. For the hourly reminder either upgrade to Vercel Pro and change the schedule to `0 * * * *`, or trigger the endpoint from any external scheduler. Example for a free service such as cron-job.org, running every hour:
 
 ```
 POST https://<project>.vercel.app/api/cron

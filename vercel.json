@@ -4,7 +4,7 @@
   "outputDirectory": "dist",
   "framework": null,
   "crons": [
-    { "path": "/api/cron", "schedule": "0 * * * *" }
+    { "path": "/api/cron", "schedule": "0 3 * * *" }
   ],
   "rewrites": [
     { "source": "/((?!api/).*)", "destination": "/index.html" }
