@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.*.tmp
+data/
+*.sqlite*
+test-results/
+playwright-report/
+.npm-cache/
+artifacts/
+
+tsconfig.tsbuildinfo

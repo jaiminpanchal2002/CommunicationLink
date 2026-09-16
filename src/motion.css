@@ -1,0 +1,113 @@
+/* Motion layer — additive polish over styles.css.
+   Philosophy: custom easing, subtle entrances, origin-aware surfaces,
+   hover only on real pointers, and full respect for reduced motion. */
+
+:root{
+  /* Strong custom curves — the built-in CSS easings are too weak. */
+  --ease-out:cubic-bezier(0.23,1,0.32,1);
+  --ease-in-out:cubic-bezier(0.77,0,0.175,1);
+  --ease-drawer:cubic-bezier(0.32,0.72,0,1);
+  --ease-soft-spring:cubic-bezier(0.34,1.4,0.64,1);
+}
+
+/* ---- Buttons: press feedback with a strong curve ---- */
+button{transition:background 180ms var(--ease-out),transform 160ms var(--ease-out),box-shadow 200ms var(--ease-out),color 160ms var(--ease-out)}
+.button.primary,.button.white,.button.secondary{transition:background 180ms var(--ease-out),transform 180ms var(--ease-out),box-shadow 220ms var(--ease-out),filter 180ms var(--ease-out)}
+
+/* Icons inside primary buttons nudge on hover for a sense of direction. */
+.button.primary svg,.button.white svg{transition:transform 200ms var(--ease-out)}
+
+/* ---- Hover states — only on precise pointers (no touch false-positives) ---- */
+@media (hover:hover) and (pointer:fine){
+  .button.primary:hover{box-shadow:0 10px 24px #2f492f2e;transform:translateY(-1px)}
+  .button.primary:hover svg,.button.white:hover svg{transform:translate(2px,-2px)}
+  .button.secondary:hover,.button.white:hover{transform:translateY(-1px)}
+
+  .nav-item{transition:background 160ms var(--ease-out),color 160ms var(--ease-out),padding-left 200ms var(--ease-out)}
+  .nav-item:hover:not(.active){padding-left:18px}
+
+  /* Cards lift gently and warm their shadow on hover. */
+  .panel,.stat-strip>button,.weekend-card,.checkin-card,.appreciation-card,
+  .money-preview,.goal-full,.agreement-card,.calendar-event,.topic-row,.tip-panel{
+    transition:transform 260ms var(--ease-out),box-shadow 300ms var(--ease-out),border-color 260ms var(--ease-out),background 220ms var(--ease-out);
+  }
+  .stat-strip>button:hover,.money-preview:hover,.calendar-event:hover{background:#f7faf4}
+  .topic-row:hover{background:#f6f9f3}
+  .weekend-card:hover,.checkin-card:hover,.appreciation-card:hover,.goal-full:hover,
+  .agreement-card:hover,.money-preview:hover{transform:translateY(-2px);box-shadow:0 16px 40px #24351f1a}
+
+  /* Row arrows drift toward their direction on hover. */
+  .row-arrow,.topic-row .row-arrow,.calendar-event svg:last-child,.stat-strip>button>svg:last-child{
+    transition:transform 220ms var(--ease-out),opacity 220ms var(--ease-out);
+  }
+  .topic-row:hover .row-arrow,.calendar-event:hover>svg:last-child,.stat-strip>button:hover>svg:last-child{
+    transform:translate(3px,-3px);
+  }
+  .text-button svg{transition:transform 200ms var(--ease-out)}
+  .text-button:hover svg{transform:translate(2px,-2px)}
+}
+
+/* ---- Icon buttons: quiet, responsive press ---- */
+.icon-button{transition:background 160ms var(--ease-out),transform 160ms var(--ease-out),color 160ms var(--ease-out)}
+.icon-button:active:not(:disabled){transform:scale(.92)}
+
+/* ---- Dialog: scale in from center (modals stay centered by design) ---- */
+dialog{animation:dialog-pop 240ms var(--ease-out);transform-origin:center}
+@keyframes dialog-pop{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+dialog::backdrop{animation:backdrop-in 240ms var(--ease-out)}
+@keyframes backdrop-in{from{opacity:0}to{opacity:1}}
+
+/* ---- Toast: rises from the bottom, keeps its horizontal centering ---- */
+.toast{animation:toast-in 360ms var(--ease-soft-spring)}
+@keyframes toast-in{
+  from{opacity:0;transform:translateX(-50%) translateY(16px) scale(.96)}
+  to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+}
+
+/* ---- Page entrance: gentle staggered fade-up (replays on nav, kept fast) ---- */
+.content>*{animation:rise 420ms var(--ease-out) both}
+.content>*:nth-child(1){animation-delay:0ms}
+.content>*:nth-child(2){animation-delay:55ms}
+.content>*:nth-child(3){animation-delay:110ms}
+.content>*:nth-child(4){animation-delay:160ms}
+.content>*:nth-child(n+5){animation-delay:200ms}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Inside a panel, list rows arrive in a soft cascade. */
+.conversations-panel .topic-row,.goals-panel .goal-preview,
+.calendar-panel .calendar-event,.notification-list .notice{
+  animation:rise 380ms var(--ease-out) both;
+}
+.conversations-panel .topic-row:nth-child(2){animation-delay:60ms}
+.conversations-panel .topic-row:nth-child(3){animation-delay:120ms}
+.calendar-panel .calendar-event:nth-child(2){animation-delay:60ms}
+.calendar-panel .calendar-event:nth-child(3){animation-delay:120ms}
+
+/* ---- Progress bars ease toward their value ---- */
+progress{transition:none}
+progress::-webkit-progress-value{transition:width 700ms var(--ease-out)}
+progress::-moz-progress-bar{transition:width 700ms var(--ease-out)}
+
+/* ---- Loading heart: a slow, calm beat ---- */
+.loading svg{animation:heartbeat 2.4s var(--ease-in-out) infinite}
+@keyframes heartbeat{0%,100%{transform:scale(1)}18%{transform:scale(1.12)}30%{transform:scale(1)}45%{transform:scale(1.07)}}
+.loading p{animation:rise 600ms var(--ease-out) both;animation-delay:120ms}
+
+/* ---- Plant art: a barely-there sway, purely decorative ---- */
+.plant-art svg{animation:sway 7s var(--ease-in-out) infinite;transform-origin:bottom center}
+@keyframes sway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
+
+/* ---- Notification dot: a single soft pulse to draw the eye ---- */
+.notification-button i{animation:dot-pop 320ms var(--ease-soft-spring) both}
+@keyframes dot-pop{from{opacity:0;transform:scale(0)}60%{transform:scale(1.25)}to{opacity:1;transform:scale(1)}}
+
+/* Sidebar slides in on mobile with an iOS-like drawer curve. */
+@media (max-width:900px){
+  .sidebar{transition:transform 360ms var(--ease-drawer)}
+}
+
+/* ---- Nothing moves for people who ask for calm ---- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .content>*{opacity:1!important;transform:none!important}
+}

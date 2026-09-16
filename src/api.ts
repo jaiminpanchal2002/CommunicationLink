@@ -1,0 +1,2 @@
+export class ApiError extends Error {constructor(message:string,public status:number){super(message)}}
+export async function api(path:string,body?:unknown,method?:string){const response=await fetch('/api'+path,{method:method||(body?'POST':'GET'),headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined});const data=await response.json();if(!response.ok)throw new ApiError(data.error||'Something went wrong. Please try again.',response.status);return data;}
