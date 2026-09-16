@@ -171,6 +171,7 @@ export function createApp(options={}) {
       for(const o of all('outbox')) {
         if(!['pending','retry','not_configured'].includes(o.status)||o.nextAttempt>now.getTime())continue;
         const u=get('users',o.userId),n=get('notifications',o.notificationId),config=integration();
+        if(!n||!u){put('outbox',{...o,status:'superseded'});continue;}
         if(n.calendar) {
           const topic=get('topics',n.calendar.topicId);
           if(!topic||topic.status!=='scheduled'||(topic.calendarSequence||0)!==n.calendar.sequence){put('outbox',{...o,status:'superseded'});continue;}
