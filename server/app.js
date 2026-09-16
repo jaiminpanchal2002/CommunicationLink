@@ -36,7 +36,9 @@ export function createApp(options={}) {
   const limits = new Map();
   app.use('/api',(req,res,next)=>{
     res.set('Cache-Control','no-store'); res.set('X-Content-Type-Options','nosniff');
-    if(!['GET','HEAD','OPTIONS'].includes(req.method) && ((req.headers.origin&&!origins.includes(req.headers.origin)) || req.headers['sec-fetch-site']==='cross-site')) return res.status(403).json({error:'This origin is not allowed.'});
+    const sfs=req.headers['sec-fetch-site'];
+    const crossOrigin=sfs?(sfs!=='same-origin'&&sfs!=='none'):(!!req.headers.origin&&!origins.includes(req.headers.origin));
+    if(!['GET','HEAD','OPTIONS'].includes(req.method) && crossOrigin) return res.status(403).json({error:'This origin is not allowed.'});
     next();
   });
   const limited=(req,res,next)=>{
