@@ -5,6 +5,7 @@ import { z } from 'zod';
 import nodemailer from 'nodemailer';
 import {registerIntegrations} from './integrations.js';
 import { buildCalendar, calendarSnapshot, organizerEmail } from './calendar.js';
+import { renderNotificationEmail } from './email-template.js';
 
 const token = () => randomBytes(32).toString('hex');
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -178,7 +179,7 @@ export function createApp(options={}) {
         try {
           if(o.channel==='email') {
             const transport=(options.createTransport||nodemailer.createTransport)({host:env.SMTP_HOST,port:Number(env.SMTP_PORT||587),secure:env.SMTP_SECURE==='true',auth:env.SMTP_USER?{user:env.SMTP_USER,pass:env.SMTP_PASSWORD}:undefined,connectionTimeout:10000,socketTimeout:10000});
-            await transport.sendMail({from:env.SMTP_FROM,to:n.calendar?n.calendar.attendees:u.email,subject:'Together · a private update',text:n.title,...(n.calendar?{icalEvent:{filename:'together-conversation.ics',method:'REQUEST',content:buildCalendar(n.calendar)}}:{})});
+            await transport.sendMail({from:env.SMTP_FROM,to:n.calendar?n.calendar.attendees:u.email,subject:'Together · a private update',text:n.title,html:renderNotificationEmail({title:n.title,type:n.type,appUrl:(env.APP_ORIGIN||'').split(',')[0].trim()}),...(n.calendar?{icalEvent:{filename:'together-conversation.ics',method:'REQUEST',content:buildCalendar(n.calendar)}}:{})});
           } else {
             const send=options.fetch || fetch;
             let response;
